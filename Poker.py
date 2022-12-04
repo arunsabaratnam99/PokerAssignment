@@ -2,6 +2,7 @@ import random
 import copy
 
 #Arun Sabaratnam 300297854
+#Bob Yang 300288751
 
 class Player:
   def __init__(self):
@@ -166,7 +167,94 @@ class Game(Player):
     if 2 in paircheck:
       return True
     return False 
+  
+  def combinations(self, cards):
+    ans = []
+    cards2 = cards.copy()
 
+    def possibleCombo(s, c):
+      if len(c) == 5:
+        ans.append(c.copy())
+        return
+      
+      for i in range(len(cards2)):
+        if c.count(cards2[i]) > 0:
+          continue
+        c.append(cards2[i])
+        possibleCombo(i+1, c)
+        c.pop()
+
+    possibleCombo(0, [])
+    return ans
+
+class TexasHoldem(Game):
+    def __init__(self, deck, players, n = 2):
+      super().__init__(deck, players, n)
+      self.best = []
+    
+    def deal(self):
+      for i in range(len(self.players)):
+        for j in range(2):
+          Game.add_card(self,i)
+      
+      for i in range(5):
+        Game.add_to_table(self)
+      
+    def hands(self, values):
+      for i in range(len(self.players)):
+        Tcards = []
+        bests = []
+
+        for j in range(len(self.players[i].hand)):
+          Tcards.append(self.players[i].hand[j])
+        
+        for k in range(len(self.tablecards)):
+          Tcards.append(self.tablecards[k])
+        
+        combos = Game.combinations(self, Tcards)
+
+        for i in range(len(combos)):
+          if Game.isStraightFlush(self, values, combos[i]):
+            bests.append("Straight Flush")
+          elif Game.isFourOfAKind(self,combos[i]):
+            bests.append("Four of a kind")
+          elif Game.isFullHouse(self, combos[i]):
+            bests.append("Full house")
+          elif Game.isFlush(self, combos[i]):
+            bests.append("Flush")
+          elif Game.isStraight(self, values, combos[i]):
+            bests.append("Straight")
+          elif Game.isThreeOfAKind(self, combos[i]):
+            bests.append("Three of a kind")
+          elif Game.isTwoPairs(self, combos[i]):
+            bests.append("Two pairs")
+          elif Game.isOnePair(self, combos[i]):
+            bests.append("One pair")
+          else:
+            bests.append("High card")
+          
+        
+        if bests.count("Straight Flush")>0:
+          self.best.append("Straight Flush")
+        elif bests.count("Four of a kind")>0:
+          self.best.append("Four of a kind")
+        elif bests.count("Full house")>0:
+          self.best.append("Full house")
+        elif bests.count("Flush")>0:
+          self.best.append("Flush")
+        elif bests.count("Straight")>0:
+          self.best.append("Straight")
+        elif bests.count("Three of a kind")>0:
+          self.best.append("Three of a kind")
+        elif bests.count("Two pairs")>0:
+          self.best.append("Two pairs")
+        elif bests.count("One pair")>0:
+          self.best.append("One pair")
+        elif bests.count("High card")>0:
+          self.best.append("High card")
+        
+      return self.best
+        
 
 deck = []
 cards = ['A','2','3','4','5','6','7','8','9','T','J','Q','K']
@@ -194,20 +282,26 @@ random.shuffle(deck)
 
 game = Game(deck,players,n)
 
-for i in range(game.playersnum):
-  for j in range(5):
-    game.add_card(i)
+T = TexasHoldem(deck,players,n)
+
+T.deal()
+
+for i in range(len(T.players)):
+  T.players[i].print()
+
+print(T.tablecards)
+
+print(T.hands(values))
+
+
+#for i in range(game.playersnum):
+  #for j in range(5):
+    #game.add_card(i)
     
-print(game.isStraightFlush(values,['5S', 'AS', '3S', '2S', '4S']))
-print(game.isFourOfAKind(['5S','5D','5D','3D','5D']))
-print(game.isFullHouse(['5S','3S','5D','3D','3S']))
-print(game.isStraight(values,['TD', 'JD', 'KH', 'QS', '8S']))
-print(game.isThreeOfAKind(['TD', 'JD', 'JH', 'JS', '8S']))
-print(game.isTwoPairs(['TH', '6S', 'AS', 'TC', '6D'] ))
-print(game.isOnePair(['TH', '6S', 'AS', 'KC', '3D']))
-
-
-
-
-
-
+#print(game.isStraightFlush(values,['5S', 'AS', '3S', '2S', '4S']))
+#print(game.isFourOfAKind(['5S','5D','5D','3D','5D']))
+#print(game.isFullHouse(['5S','3S','5D','3D','3S']))
+#print(game.isStraight(values,['TD', 'JD', 'KH', 'QS', '8S']))
+#print(game.isThreeOfAKind(['TD', 'JD', 'JH', 'JS', '8S']))
+#print(game.isTwoPairs(['TH', '6S', 'AS', 'TC', '6D'] ))
+#print(game.isOnePair(['TH', '6S', 'AS', 'KC', '3D']))
