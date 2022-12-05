@@ -169,21 +169,27 @@ class Game(Player):
     return False 
   
   def combinations(self, cards):
+    #answer list to store all possible combinations
     ans = []
+    #make a copy of the cards to make sure they are not being alterred in the recursion
     cards2 = cards.copy()
 
     def possibleCombo(s, c):
+      #if the length of the combination is 5 append to answer
       if len(c) == 5:
         ans.append(c.copy())
         return
       
       for i in range(len(cards2)):
+        #making sure there are no duplicate cards
         if c.count(cards2[i]) > 0:
           continue
+        #generating all possible combinations of cards
         c.append(cards2[i])
         possibleCombo(i+1, c)
         c.pop()
-
+     
+    #0 is the starting position (index 0) of the array
     possibleCombo(0, [])
     return ans
 
