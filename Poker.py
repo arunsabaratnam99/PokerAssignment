@@ -11,7 +11,7 @@ class Player:
   def print(self):
     print(self.hand)
   
-class Game(Player):
+class PokerGame(Player):
   def __init__(self, deck, players, n = 2):
     self.playersnum = n
     self.players = players
@@ -38,31 +38,12 @@ class Game(Player):
     self.tablecards.append(self.deck[0])
     self.deck.pop(0)
     
-  
   def isStraightFlush(self,values, cards):    
-    firstvalues = [x[0] for x in cards]
-    secondvalues = [x[1] for x in cards]
-        
-    if secondvalues.count(secondvalues[0]) != len(secondvalues):
-      return False 
+    if PokerGame.isStraight(self,values,cards) == True and PokerGame.isFlush(self,cards) == True:
+      return True 
     
-    else:
-      valuesofhand = []
-      for i in firstvalues:
-        valuesofhand.append(values[i])
-        valuesofhand = sorted(valuesofhand)
-        
-      for i in range(len(valuesofhand)):
-        try:
-          if valuesofhand[i+1] - valuesofhand[i] != 1:
-            return False
-          
-        except:
-          break
-        
-    return True 
-         
-  
+    return False 
+    
   def isFourOfAKind(self, cards):
     firstvalues = [x[0] for x in cards]
     copyoffirstvalues = copy.deepcopy(firstvalues)
@@ -104,12 +85,18 @@ class Game(Player):
       
   def isStraight(self,values, cards):
     firstvalues = [x[0] for x in cards]
-
     valuesofhand = []
+    
     for i in firstvalues:
       valuesofhand.append(values[i])
       valuesofhand = sorted(valuesofhand)
       
+    if 13 in valuesofhand:
+        for i in range(len(valuesofhand)):
+            if valuesofhand[i] == 1:
+                valuesofhand[i] = 14
+                valuesofhand = sorted(valuesofhand)
+              
     for i in range(len(valuesofhand)):
       try:
         if valuesofhand[i+1] - valuesofhand[i] != 1:
@@ -193,7 +180,7 @@ class Game(Player):
     possibleCombo(0, [])
     return ans
 
-class TexasHoldem(Game):
+class TexasHoldem(PokerGame):
     def __init__(self, deck, players, n = 2):
       super().__init__(deck, players, n)
       self.best = []
@@ -201,10 +188,10 @@ class TexasHoldem(Game):
     def deal(self):
       for i in range(len(self.players)):
         for j in range(2):
-          Game.add_card(self,i)
+          PokerGame.add_card(self,i)
       
       for i in range(5):
-        Game.add_to_table(self)
+        PokerGame.add_to_table(self)
       
     def hands(self, values):
       for i in range(len(self.players)):
@@ -217,24 +204,24 @@ class TexasHoldem(Game):
         for k in range(len(self.tablecards)):
           Tcards.append(self.tablecards[k])
         
-        combos = Game.combinations(self, Tcards)
+        combos = PokerGame.combinations(self, Tcards)
 
         for i in range(len(combos)):
-          if Game.isStraightFlush(self, values, combos[i]):
+          if PokerGame.isStraightFlush(self, values, combos[i]):
             bests.append("Straight Flush")
-          elif Game.isFourOfAKind(self,combos[i]):
+          elif PokerGame.isFourOfAKind(self,combos[i]):
             bests.append("Four of a kind")
-          elif Game.isFullHouse(self, combos[i]):
+          elif PokerGame.isFullHouse(self, combos[i]):
             bests.append("Full house")
-          elif Game.isFlush(self, combos[i]):
+          elif PokerGame.isFlush(self, combos[i]):
             bests.append("Flush")
-          elif Game.isStraight(self, values, combos[i]):
+          elif PokerGame.isStraight(self, values, combos[i]):
             bests.append("Straight")
-          elif Game.isThreeOfAKind(self, combos[i]):
+          elif PokerGame.isThreeOfAKind(self, combos[i]):
             bests.append("Three of a kind")
-          elif Game.isTwoPairs(self, combos[i]):
+          elif PokerGame.isTwoPairs(self, combos[i]):
             bests.append("Two pairs")
-          elif Game.isOnePair(self, combos[i]):
+          elif PokerGame.isOnePair(self, combos[i]):
             bests.append("One pair")
           else:
             bests.append("High card")
@@ -286,7 +273,7 @@ for i in cards:
 random.shuffle(deck)
 
 
-game = Game(deck,players,n)
+game = PokerGame(deck,players,n)
 
 T = TexasHoldem(deck,players,n)
 
@@ -304,10 +291,17 @@ print(T.hands(values))
   #for j in range(5):
     #game.add_card(i)
     
-#print(game.isStraightFlush(values,['5S', 'AS', '3S', '2S', '4S']))
+##print(game.isStraightFlush(values,['TS', 'JS', 'QS', 'KS', 'AS'] ))
 #print(game.isFourOfAKind(['5S','5D','5D','3D','5D']))
 #print(game.isFullHouse(['5S','3S','5D','3D','3S']))
-#print(game.isStraight(values,['TD', 'JD', 'KH', 'QS', '8S']))
+#print(game.isStraight(values,['TS', 'JS', 'QS', 'KS', 'AS'] ))
 #print(game.isThreeOfAKind(['TD', 'JD', 'JH', 'JS', '8S']))
 #print(game.isTwoPairs(['TH', '6S', 'AS', 'TC', '6D'] ))
 #print(game.isOnePair(['TH', '6S', 'AS', 'KC', '3D']))
+#print(game.isFlush(['TS', 'JS', 'QS', 'KS', 'AS']))
+
+
+
+
+
+
