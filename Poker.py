@@ -18,7 +18,6 @@ class PokerGame(Player):
     self.tablecards = []
     self.deck = deck
     
-    
   def print(self):
     print(self.playersnum)
     print(self.tablecards)
@@ -27,12 +26,10 @@ class PokerGame(Player):
       print(i.hand)
       
     print(self.deck)
-    
   
   def add_card(self,index):
     self.players[index].hand.append(self.deck[0])
     self.deck.pop(0)
-    
      
   def add_to_table(self):
     self.tablecards.append(self.deck[0])
@@ -59,7 +56,6 @@ class PokerGame(Player):
     
     return False 
 
-  
   def isFullHouse(self,cards):
     firstvalues = [x[0] for x in cards]
     copyoffirstvalues = copy.deepcopy(firstvalues)
@@ -74,7 +70,6 @@ class PokerGame(Player):
     
     return False 
       
-  
   def isFlush(self,cards):
     secondvalues = [x[1] for x in cards]
     
@@ -137,8 +132,7 @@ class PokerGame(Player):
     if paircheck == [1,2,2]:
       return True
     return False 
-      
-      
+       
   def isOnePair(self,cards):
     firstvalues = [x[0] for x in cards]
     copyoffirstvalues = copy.deepcopy(firstvalues)
@@ -149,8 +143,7 @@ class PokerGame(Player):
     for i in range(len(firstvalues)):
       paircheck.append(copyoffirstvalues.count(firstvalues[i]))
       paircheck = sorted(paircheck)
-      
-    
+       
     if 2 in paircheck:
       return True
     return False 
@@ -225,8 +218,7 @@ class TexasHoldem(PokerGame):
             bests.append("One pair")
           else:
             bests.append("High card")
-          
-        
+                 
         if bests.count("Straight Flush")>0:
           self.best.append("Straight Flush")
         elif bests.count("Four of a kind")>0:
@@ -248,7 +240,7 @@ class TexasHoldem(PokerGame):
         
       return self.best
         
-
+#test cases
 deck = []
 cards = ['A','2','3','4','5','6','7','8','9','T','J','Q','K']
 
@@ -256,8 +248,6 @@ values = {}
 
 for i in range(1, len(cards) + 1):
   values[cards[i-1]] = i
-
-print(values)
 
 suit = ['D','C','S','H']  
 
@@ -272,7 +262,6 @@ for i in cards:
     
 random.shuffle(deck)
 
-
 game = PokerGame(deck,players,n)
 
 T = TexasHoldem(deck,players,n)
@@ -280,28 +269,9 @@ T = TexasHoldem(deck,players,n)
 T.deal()
 
 for i in range(len(T.players)):
+  print("Player", i+1, "hand: ", end='')
   T.players[i].print()
 
-print(T.tablecards)
+print("Table cards: ", T.tablecards)
 
 print(T.hands(values))
-
-
-#for i in range(game.playersnum):
-  #for j in range(5):
-    #game.add_card(i)
-    
-##print(game.isStraightFlush(values,['TS', 'JS', 'QS', 'KS', 'AS'] ))
-#print(game.isFourOfAKind(['5S','5D','5D','3D','5D']))
-#print(game.isFullHouse(['5S','3S','5D','3D','3S']))
-#print(game.isStraight(values,['TS', 'JS', 'QS', 'KS', 'AS'] ))
-#print(game.isThreeOfAKind(['TD', 'JD', 'JH', 'JS', '8S']))
-#print(game.isTwoPairs(['TH', '6S', 'AS', 'TC', '6D'] ))
-#print(game.isOnePair(['TH', '6S', 'AS', 'KC', '3D']))
-#print(game.isFlush(['TS', 'JS', 'QS', 'KS', 'AS']))
-
-
-
-
-
-
